@@ -42,4 +42,4 @@ app.use('/pets', pets);
 
 app.listen(port);
 
-console.log(`Server listening on port ${ process.env.PORT || port}`);
+console.log(`Server listening on port ${port}`);
