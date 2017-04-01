@@ -8,8 +8,25 @@ const getPets = (req, res)=>{
   const query = {
     'name': {
       '$regex': req.query.name || ''
+    },
+    'type': {
+      '$regex': req.query.type || ''
+    },
+    'size':{
+      '$regex': req.query.size || ''
+    },
+    'sex':{
+      '$regex': req.query.sex || ''
     }
   };
+
+  if(req.query.castrated){
+    query.castrated = true;
+  }
+
+  if(req.query.dewormed){
+    query.dewormed = true;
+  }
 
   Pet.count(query).then(count =>{
     const skip = Number(req.query.skip);
@@ -37,7 +54,7 @@ const getPets = (req, res)=>{
 const postPets = (req, res)=>{
   const pet = new Pet(req.body);
   pet.save(()=>{
-    res.json({message: 'Sucesso!'});
+    res.json({message: 'Sucesso!', id: pet._id});
   });
 }
 
