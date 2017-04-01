@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Pet = require('../../models/pet/pet');
 
-const getPets = (req, res, next)=>{
+const getPets = (req, res)=>{
   const limit = 5;
 
   const query = {
@@ -34,17 +34,27 @@ const getPets = (req, res, next)=>{
   });
 }
 
-const postPets = (req, res, next)=>{
-  console.log(req.body);
+const postPets = (req, res)=>{
   const pet = new Pet(req.body);
   pet.save(()=>{
     res.json({message: 'Sucesso!'});
   });
 }
 
+const getPet = (req, res)=>{
+  Pet.findById(req.params.id).then((err,pet)=>{
+    if(err){
+      res.json(err);
+    }
+      res.json(pet);
+  });
+}
+
 router
   .get('/', getPets)
-  .post('/', postPets);
+  .post('/', postPets)
+
+  .get('/:id', getPet);
 
 
 
