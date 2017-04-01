@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/mblodorn/animapp-api#readme",
   "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
     "mocha": "^3.2.0",
-    "mongoose": "^4.8.6",
+    "mongoose": "^4.9.2",
     "nodemon": "^1.11.0"
-  }
+  }}
 }
