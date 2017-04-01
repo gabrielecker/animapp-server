@@ -10,7 +10,7 @@ const config = require('./config');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-const port = config.SERVER_PORT || 3000;
+const port = process.env.PORT || 3000;
 
 //mongoose
 mongoose.connect(config.MONGO_URL);
@@ -42,4 +42,4 @@ app.use('/pets', pets);
 
 app.listen(port);
 
-console.log(`Server listening on port ${port}`);
+console.log(`Server listening on port ${ process.env.PORT || port}`);
