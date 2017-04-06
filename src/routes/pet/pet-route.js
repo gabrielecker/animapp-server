@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Pet = require('../../models/pet/pet');
 
-const getPets = (req, res)=>{
+router.get('/',(req, res)=>{
   const limit = 5;
 
   const query = {
@@ -20,11 +20,11 @@ const getPets = (req, res)=>{
     }
   };
 
-  if(req.query.castrated){
+  if(req.query.castrated === "true"){
     query.castrated = true;
   }
 
-  if(req.query.dewormed){
+  if(req.query.dewormed === "true"){
     query.dewormed = true;
   }
 
@@ -49,30 +49,23 @@ const getPets = (req, res)=>{
         res.json({pets, pagination});
       });
   });
-}
+});
 
-const postPets = (req, res)=>{
+router.post('/',(req, res)=>{
   const pet = new Pet(req.body);
   pet.save(()=>{
     res.json({message: 'Sucesso!', id: pet._id});
   });
-}
+});
 
-const getPet = (req, res)=>{
+router.get('/:id',(req, res)=>{
   Pet.findById(req.params.id).then((err,pet)=>{
     if(err){
       res.json(err);
     }
       res.json(pet);
   });
-}
-
-router
-  .get('/', getPets)
-  .post('/', postPets)
-
-  .get('/:id', getPet);
-
+});
 
 
 module.exports = router;
