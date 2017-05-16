@@ -19,6 +19,10 @@ const generateAccessToken = (req, res, next) =>{
 
 const respond = (req, res) => {
   res.status(200).json({
+    name: req.user.name,
+    lastName: req.user.lastName,
+    facebookProfile: req.user.facebookProfile,
+    cellPhone: req.user.cellPhone,
     user: req.user.username,
     token: req.token
   });

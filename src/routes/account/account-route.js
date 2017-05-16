@@ -8,16 +8,20 @@ const { generateAccessToken, respond, authenticate} = authMiddleWare;
 
 router.post('/register',  (req, res) =>{
   Account.register(new Account({
-    username: req.body.email}), req.body.password, (err, account) =>{
+    username: req.body.email,
+    name: req.body.name,
+    lastName: req.body.lastName,
+    facebookProfile: req.body.facebookProfile,
+    cellPhone: req.body.cellPhone,
+  }), req.body.password, (err, account) =>{
     if(err){
-      res.send({message: err});
+      return res.json({message: err});
     }
-
     passport.authenticate(
       'local', {
         session: false
-      })(req, res, ()=>{
-      res.status(200).json({message:'Successfully created new account'});
+      })(req, res, (err)=>{
+        res.json({message:'Successfully created new account'});
     });
   });
 });
@@ -36,6 +40,7 @@ router.get('/logout', authenticate, (req, res)=>{
 });
 
 router.get('/me', authenticate, (req, res) =>{
+  console.log(Account);
   res.status(200).json(req.user);
 });
 
