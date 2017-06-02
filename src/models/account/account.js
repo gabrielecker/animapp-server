@@ -1,26 +1,47 @@
 const mongoose = require('mongoose');
-const passPortLocalMongoose = require('passport-local-mongoose');
 const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt-nodejs');
 
-const Account = new Schema({
-  email: String,
-  password: String,
+const AccountSchema = new Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
   name: String,
   lastName: String,
   facebookProfile: String,
   cellPhone: String,
 });
 
-Account.plugin(passPortLocalMongoose,{
-  selectFields: 'name lastName facebookProfile cellPhone',
-  errorMessages:{
-    MissingPasswordError: 'Por favor informe sua senha!',
-    AttemptTooSoonError: 'Sua conta está bloqueada, tente mais tarde!',
-    TooManyAttemptsError: 'Sua conta foi bloqueada devido a diversas tentativas de login!',
-    IncorrectPasswordError: 'Senha incorreta!',
-    IncorrectUsernameError: 'Usuário não existe!',
-    MissingUsernameError: 'Este usuário já existe!',
-  },
+AccountSchema.pre('save', function(next){
+  const account = this;
+  bcrypt.genSalt(10, (err, salt)=>{
+    if(err){
+      return next(err);
+    };
+
+    bcrypt.hash(account.password, salt, null, (err, hash)=>{
+      if(err){
+        return next(err);
+      };
+      account.password = hash;
+      next();
+    });
+  });
 });
 
-module.exports = mongoose.model('Account', Account);
+AccountSchema.methods.comparePassword = function(candidatePassword, callback) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if (err) { return callback(err); }
+
+    callback(null, isMatch);
+  });
+}
+
+module.exports = mongoose.model('Account', AccountSchema);

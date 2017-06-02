@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Pet = require('../../models/pet/pet');
-const authMiddleWare = require('../../middleware/auth-middleware');
+const passport = require('passport');
 
-const { authenticate } = authMiddleWare;
+const requireAuth = passport.authenticate('jwt', {session: false});
 
 router.get('/',(req, res)=>{
   const limit = 5;
@@ -54,7 +54,7 @@ router.get('/',(req, res)=>{
   });
 });
 
-router.post('/',authenticate, (req, res)=>{
+router.post('/',requireAuth, (req, res)=>{
   const pet = new Pet(req.body);
   pet.save(()=>{
     res.json({message: 'Sucesso!', id: pet._id});

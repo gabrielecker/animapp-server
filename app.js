@@ -1,8 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const passport = require('passport');
-const LocalStrategy =  require('passport-local').Strategy;
 const app = express();
 
 //models
@@ -29,7 +27,7 @@ app.use((req, res, next)=>{
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,authorization');
 
 // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -44,18 +42,6 @@ const pets = require('./src/routes/pet/pet-route');
 app.use('/pets', pets);
 const accounts = require('./src/routes/account/account-route');
 app.use('/accounts', accounts);
-
-//passport config
-app.use(passport.initialize());
-passport.use(new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password'
-
-  },
-  Account.authenticate()
-));
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
 
 // error handlers
 
