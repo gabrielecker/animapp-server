@@ -1,8 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const passport = require('passport');
-const LocalStrategy =  require('passport-local').Strategy;
 const app = express();
 
 //models
@@ -29,7 +27,7 @@ app.use((req, res, next)=>{
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,authorization');
 
 // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -38,17 +36,6 @@ app.use((req, res, next)=>{
   next();
 });
 
-//passport config
-app.use(passport.initialize());
-passport.use(new LocalStrategy({
-    userNameField: 'email',
-    passwordField: 'password'
-  },
-  Account.authenticate()
-));
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
-
 
 //routes
 const pets = require('./src/routes/pet/pet-route');
@@ -56,8 +43,33 @@ app.use('/pets', pets);
 const accounts = require('./src/routes/account/account-route');
 app.use('/accounts', accounts);
 
-const port = process.env.PORT || 3000;
+// error handlers
 
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    console.log('================');
+    console.log('MESSAGE:')
+    console.log(err.message);
+    console.log('ERROR:')
+    console.log(err);
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
+
+
+
+const port = process.env.PORT || 3000;
 app.listen(port);
 
 console.log(`Server listening on port ${port}`);

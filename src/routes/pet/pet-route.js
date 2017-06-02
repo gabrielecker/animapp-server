@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Pet = require('../../models/pet/pet');
+const passport = require('passport');
+
+const requireAuth = passport.authenticate('jwt', {session: false});
 
 router.get('/',(req, res)=>{
   const limit = 5;
@@ -36,7 +39,7 @@ router.get('/',(req, res)=>{
       .sort('--createdOn')
       .exec((err, pets)=>{
         if(err){
-          res.send(err);
+          return res.json(err.message);
         }
 
         const pagination = [];
@@ -51,7 +54,7 @@ router.get('/',(req, res)=>{
   });
 });
 
-router.post('/',(req, res)=>{
+router.post('/',requireAuth, (req, res)=>{
   const pet = new Pet(req.body);
   pet.save(()=>{
     res.json({message: 'Sucesso!', id: pet._id});
@@ -61,7 +64,7 @@ router.post('/',(req, res)=>{
 router.get('/:id',(req, res)=>{
   Pet.findById(req.params.id).then((err,pet)=>{
     if(err){
-      res.json(err);
+      return res.json(err);
     }
       res.json(pet);
   });
